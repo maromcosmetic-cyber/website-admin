@@ -10,16 +10,25 @@ export default function BlogList() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('/api/blog')
-            .then(res => res.json())
-            .then(data => {
-                setPosts(data);
-                setLoading(false);
-            })
-            .catch(err => {
+        (async () => {
+            try {
+                const res = await fetch('/api/blog');
+                const data = await res.json();
+
+                if (!res.ok) {
+                    console.error('Error fetching blog posts:', data);
+                    setPosts([]);
+                    return;
+                }
+
+                setPosts(Array.isArray(data) ? data : []);
+            } catch (err) {
                 console.error(err);
+                setPosts([]);
+            } finally {
                 setLoading(false);
-            });
+            }
+        })();
     }, []);
 
     const handleDelete = async (id: string) => {

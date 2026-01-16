@@ -15,15 +15,43 @@ const isValidUrl = (url: string) => {
 export const supabase = isValidUrl(supabaseUrl) && supabaseAnonKey
     ? createClient(supabaseUrl, supabaseAnonKey)
     : {
-        from: () => ({
-            select: () => Promise.resolve({ data: [], error: { message: 'Supabase not configured' } }),
-            upload: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
-            list: () => Promise.resolve({ data: [], error: { message: 'Supabase not configured' } }),
-            update: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
-            upsert: () => Promise.resolve({ data: null, error: { message: 'Supabase not configured' } }),
-            getPublicUrl: () => ({ data: { publicUrl: '' } }),
-            eq: () => ({ single: () => Promise.resolve({ data: null, error: null }), update: () => Promise.resolve({ error: { message: 'Supabase not configured' } }) }),
-        }),
+        from: () => {
+            const notConfiguredError = {
+                message: 'Supabase not configured',
+                details: null,
+                hint: null,
+                code: 'SUPABASE_NOT_CONFIGURED'
+            };
+
+            const makeThenable = (result: any) => {
+                const promise = Promise.resolve(result);
+                return {
+                    then: promise.then.bind(promise),
+                    catch: promise.catch.bind(promise),
+                    finally: promise.finally.bind(promise)
+                };
+            };
+
+            const makeQueryBuilder = (result: any) => {
+                const builder: any = {
+                    eq: () => builder,
+                    order: () => builder,
+                    in: () => builder,
+                    single: () => makeQueryBuilder({ data: null, error: notConfiguredError }),
+                    select: () => builder,
+                };
+
+                return Object.assign(builder, makeThenable(result));
+            };
+
+            return {
+                select: () => makeQueryBuilder({ data: [], error: notConfiguredError }),
+                insert: () => makeQueryBuilder({ data: null, error: notConfiguredError }),
+                update: () => makeQueryBuilder({ data: null, error: notConfiguredError }),
+                upsert: () => makeQueryBuilder({ data: null, error: notConfiguredError }),
+                delete: () => makeQueryBuilder({ data: null, error: notConfiguredError }),
+            };
+        },
         storage: {
             from: () => ({
                 list: () => Promise.resolve({ data: [], error: null }),

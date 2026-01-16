@@ -10,16 +10,25 @@ export default function ProductsList() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('/api/products')
-            .then(res => res.json())
-            .then(data => {
-                setProducts(data);
-                setLoading(false);
-            })
-            .catch(err => {
+        (async () => {
+            try {
+                const res = await fetch('/api/products');
+                const data = await res.json();
+
+                if (!res.ok) {
+                    console.error('Error fetching products:', data);
+                    setProducts([]);
+                    return;
+                }
+
+                setProducts(Array.isArray(data) ? data : []);
+            } catch (err) {
                 console.error(err);
+                setProducts([]);
+            } finally {
                 setLoading(false);
-            });
+            }
+        })();
     }, []);
 
     if (loading) return <div className="min-h-screen flex items-center justify-center text-[#015030]">Loading...</div>;

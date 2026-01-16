@@ -8,6 +8,10 @@ const BLOG_FILE_PATH = path.resolve('../marom-frontend/app/data/blog.ts');
 
 export async function GET() {
     try {
+        if (!fs.existsSync(BLOG_FILE_PATH)) {
+            return NextResponse.json([]);
+        }
+
         const fileContent = fs.readFileSync(BLOG_FILE_PATH, 'utf-8');
 
         // Extract the JSON-like array from the file content
@@ -30,6 +34,13 @@ export async function GET() {
 
 export async function PUT(request: Request) {
     try {
+        if (!fs.existsSync(BLOG_FILE_PATH)) {
+            return NextResponse.json(
+                { error: 'Blog file storage is not available in this environment' },
+                { status: 501 }
+            );
+        }
+
         const posts: BlogPost[] = await request.json();
 
         // Generate the TS file content
