@@ -3,10 +3,18 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseKey);
+
+function getSupabase() {
+    if (!supabaseUrl || !supabaseKey) return null;
+    return createClient(supabaseUrl, supabaseKey);
+}
 
 export async function GET() {
     try {
+        const supabase = getSupabase();
+        if (!supabase) {
+            return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 });
+        }
         const { data: products, error } = await supabase
             .from('products')
             .select('*')
@@ -26,6 +34,10 @@ export async function GET() {
 
 export async function PUT(request: Request) {
     try {
+        const supabase = getSupabase();
+        if (!supabase) {
+            return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 });
+        }
         const product = await request.json();
 
         // Update product in Supabase
