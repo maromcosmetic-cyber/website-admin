@@ -38,8 +38,8 @@ export default function ImagePicker({ currentImage, onSelect, onClose }: ImagePi
             console.error('Error fetching images:', error);
         } else if (data) {
             const fileList = data
-                .filter(file => file.name !== '.emptyFolderPlaceholder')
-                .map(file => {
+                .filter((file: { name: string }) => file.name !== '.emptyFolderPlaceholder')
+                .map((file: { name: string }) => {
                     const { data: publicUrlData } = supabase.storage.from('products').getPublicUrl(file.name);
                     return {
                         name: file.name,
