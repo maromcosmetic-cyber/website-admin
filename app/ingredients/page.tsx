@@ -232,7 +232,7 @@ export default function IngredientsPage() {
                                 <div className="relative aspect-square mb-6 rounded-xl overflow-hidden bg-[#F9F9F9] p-8 group-hover:bg-[#FDFBF7] transition-colors">
                                     {/* Handle both local path (seed data) and full URLs (uploaded) */}
                                     <img
-                                        src={ing.image.startsWith('http') ? ing.image : `http://localhost:3000${ing.image}`}
+                                        src={ing.image}
                                         alt={ing.name}
                                         className="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-500"
                                     />
@@ -300,7 +300,7 @@ export default function IngredientsPage() {
                                 >
                                     {editForm.imagePreview ? (
                                         <img
-                                            src={editForm.imagePreview.startsWith('http') || editForm.imagePreview.startsWith('blob') ? editForm.imagePreview : `http://localhost:3000${editForm.imagePreview}`}
+                                            src={editForm.imagePreview}
                                             alt="Preview"
                                             className="w-full h-full object-contain p-4 mix-blend-multiply"
                                         />
