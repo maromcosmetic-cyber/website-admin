@@ -57,7 +57,7 @@ export default function ProductsList() {
                                     <div className="flex items-center gap-6">
                                         <div className="w-20 h-20 bg-[#FDFBF7] rounded-xl overflow-hidden relative shadow-sm border border-[#015030]/5">
                                             {product.image ? (
-                                                <img src={product.image.startsWith('http') ? product.image : `http://localhost:3000${product.image}`} className="w-full h-full object-cover" alt="" />
+                                                <img src={product.image} className="w-full h-full object-cover" alt="" />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center text-[#015030]/30 font-serif italic">Img</div>
                                             )}
@@ -77,7 +77,7 @@ export default function ProductsList() {
                                     ฿{product.price.toLocaleString()}
                                 </td>
                                 <td className="p-8 text-right">
-                                    <Link href={`/edit/${product.id}`} className="inline-block px-8 py-3 bg-[#FDB723] text-[#015030] rounded-full text-sm font-bold uppercase tracking-widest hover:scale-105 transition-transform shadow-md">
+                                    <Link href={`/products/edit/${product.id}`} className="inline-block px-8 py-3 bg-[#FDB723] text-[#015030] rounded-full text-sm font-bold uppercase tracking-widest hover:scale-105 transition-transform shadow-md">
                                         Edit
                                     </Link>
                                 </td>

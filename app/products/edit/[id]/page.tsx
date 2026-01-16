@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState, use } from 'react';
-import { useRouter } from 'next/navigation';
-import { Product } from '../../types';
+import { useEffect, useState } from 'react';
+import { useRouter, useParams } from 'next/navigation';
+import { Product } from '../../../types';
 import Link from 'next/link';
-import ImagePicker from '../../components/ImagePicker';
-import { supabase } from '../../../lib/supabase';
+import ImagePicker from '../../../components/ImagePicker';
+import { supabase } from '../../../../lib/supabase';
 
 interface Ingredient {
     id: string;
@@ -14,8 +14,9 @@ interface Ingredient {
     description: string;
 }
 
-export default function EditProduct({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = use(params);
+export default function EditProduct() {
+    const params = useParams();
+    const id = params?.id as string;
     const router = useRouter();
 
     const [products, setProducts] = useState<Product[]>([]);
@@ -27,6 +28,8 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 
     // Load products and ingredients
     useEffect(() => {
+        if (!id) return;
+
         const loadData = async () => {
             setLoading(true);
             try {
@@ -112,8 +115,8 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
     return (
         <div className="min-h-screen bg-[#FDFBF7] text-[#015030] p-8 pb-32 font-sans">
             <header className="max-w-4xl mx-auto mb-12 pt-8">
-                <Link href="/" className="inline-flex items-center gap-2 text-sm uppercase tracking-[0.2em] font-bold text-[#015030]/60 hover:text-[#015030] transition-colors mb-6">
-                    ← Back to Dashboard
+                <Link href="/products" className="inline-flex items-center gap-2 text-sm uppercase tracking-[0.2em] font-bold text-[#015030]/60 hover:text-[#015030] transition-colors mb-6">
+                    ← Back to Products
                 </Link>
                 <h1 className="text-4xl font-serif font-semibold">Edit Product</h1>
             </header>
@@ -187,7 +190,7 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
                                     </button>
                                 </div>
                                 <p className="text-xs text-[#015030]/40 italic">
-                                    Enter the image URL or browse from library. Upload images to <code className="bg-[#015030]/5 px-2 py-1 rounded">/public/images/products/</code>
+                                    Enter the image URL or browse from library.
                                 </p>
                             </div>
                         </div>
@@ -208,7 +211,7 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
                                         }`}
                                 >
                                     <div className="w-12 h-12 bg-[#FDFBF7] rounded-lg overflow-hidden flex-shrink-0">
-                                        {ing.image && <img src={ing.image.startsWith('http') ? ing.image : `http://localhost:3000${ing.image}`} alt={ing.name} className="w-full h-full object-cover" />}
+                                        {ing.image && <img src={ing.image} alt={ing.name} className="w-full h-full object-cover" />}
                                     </div>
                                     <div className="flex-grow">
                                         <div className="font-bold text-sm">{ing.name}</div>
@@ -251,7 +254,7 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 
                     {/* Action Buttons */}
                     <div className="pt-8 flex justify-end gap-4">
-                        <Link href="/" className="px-12 py-5 border-2 border-[#015030]/20 rounded-full text-lg font-bold uppercase tracking-widest hover:bg-[#015030]/5 transition-colors">
+                        <Link href="/products" className="px-12 py-5 border-2 border-[#015030]/20 rounded-full text-lg font-bold uppercase tracking-widest hover:bg-[#015030]/5 transition-colors">
                             Cancel
                         </Link>
                         <button
